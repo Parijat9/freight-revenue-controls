@@ -1,0 +1,11 @@
+{
+  "shipments": 4000,
+  "exceptions": 453,
+  "revenue_gap_usd": 169170.0,
+  "overdue_usd": 1524045.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "as_of": "2026-09-30",
+  "data": "synthetic",
+  "seed": 29
+}

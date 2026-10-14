@@ -1,0 +1,9 @@
+Delivered Loads = DISTINCTCOUNT(ShipmentFinance[shipment_id])
+Billed Revenue USD = DIVIDE(SUM(ShipmentFinance[billed_cents]), 100)
+Carrier Cost USD = DIVIDE(SUM(ShipmentFinance[carrier_cost_cents]), 100)
+Billed Margin USD = [Billed Revenue USD] - [Carrier Cost USD]
+Billed Margin % = DIVIDE([Billed Margin USD], [Billed Revenue USD])
+Potential Billing Gap USD = DIVIDE(SUM(ShipmentFinance[revenue_gap_cents]), 100)
+Overdue USD = DIVIDE(SUM(ShipmentFinance[overdue_cents]), 100)
+Exception Loads = CALCULATE([Delivered Loads], ShipmentFinance[finding] <> "matched")
+Exception Rate = DIVIDE([Exception Loads], [Delivered Loads])

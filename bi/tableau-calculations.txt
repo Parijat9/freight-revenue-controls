@@ -1,0 +1,9 @@
+// Create each named calculation separately in Tableau.
+// Billed Revenue USD
+SUM([billed_cents]) / 100
+// Billed Margin Percent
+IF SUM([billed_cents]) != 0 THEN (SUM([billed_cents])-SUM([carrier_cost_cents]))/SUM([billed_cents]) END
+// Potential Billing Gap USD
+SUM([revenue_gap_cents]) / 100
+// Exception Rate
+COUNTD(IF [finding] != "matched" THEN [shipment_id] END) / COUNTD([shipment_id])
