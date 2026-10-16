@@ -16,13 +16,13 @@ if __name__ == "__main__":
     )
     render(
         out / "index.html",
-        "Freight revenue controls",
-        "Shipment-to-invoice reconciliation and overdue receivables. Reporting cutoff: 30 September 2026.",
+        "Freight billing checks",
+        "Compare shipments, agreed rates, invoices and payments. Figures as of 30 September 2026.",
         {
             "Delivered shipments": f"{metrics['shipments']:,}",
-            "Review exceptions": metrics["exceptions"],
+            "Items to review": metrics["exceptions"],
             "Potential billing gap": f"${metrics['revenue_gap_usd']:,.0f}",
-            "Overdue receivables": f"${metrics['overdue_usd']:,.0f}",
+            "Overdue payments": f"${metrics['overdue_usd']:,.0f}",
         },
         [
             {
@@ -35,7 +35,7 @@ if __name__ == "__main__":
             }
             for r in rows
         ],
-        "Review unbilled and underbilled loads with billing operations. Multiple invoices require investigation, not automatic deletion. Receivables and potential billing gaps are separate measures and must not be added together. The perfect fixture classification measures known injected cases, not production detection quality.",
+        "Check missing bills and undercharges with the billing team. If a shipment has several invoices, review them before making changes. Overdue payments and potential billing gaps measure different things; do not add them together. The results come from sample records with known errors.",
         chart=chart,
     )
     print(json.dumps(metrics, indent=2))

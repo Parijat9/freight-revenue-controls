@@ -1,80 +1,52 @@
-# Freight revenue controls
+# Freight billing checks
 
-A delivered load can appear in an operations report while its revenue is missing,
-underbilled or counted twice. This project reconciles shipments, effective-dated
-rates, invoice revisions and payment transactions into a billing review queue.
+Checks whether completed shipments have been billed correctly and which invoices still need payment.
 
-The intended users are a billing analyst and an operations manager reviewing the
-same load. Each finding retains the shipment, lane, expected amount and billed
-amount, so the analyst can explain the difference without rebuilding a spreadsheet.
+For each shipment, the report compares the agreed rate, the invoice and the payments received. It puts differences in a list that a billing team can review.
 
-![Billing review](docs/preview.png)
+![Billing report showing amounts to check](docs/preview.png)
 
-## Run it
+[Open the sample report](https://parijat9.github.io/reports/revenue.html)
 
-Python 3.10 or newer. No third-party packages or account credentials are required.
+## What it does
+
+- Finds shipments with no invoice, more than one invoice, or a different amount than expected.
+- Uses the rate that applied on the shipment date.
+- Uses the latest invoice available on the chosen reporting date.
+- Adds separate payments together before checking the balance.
+- Keeps billing mistakes separate from overdue payments.
+
+## Try it
+
+Install Python 3.10 or newer, then run these commands from this folder. No extra packages or accounts are needed.
 
 ```bash
 python -m unittest discover -s tests -v
 python run.py
 ```
 
-Open `build/index.html` in a browser. Filter by shipment, lane or finding.
-The same command produces a SQLite warehouse, three CSV extracts and `metrics.json`.
-The checked-in [sample report](sample/index.html) can be downloaded and opened directly.
+Open `build/index.html` in your browser. Use its search box to find a shipment, route or issue. The run also saves CSV files for spreadsheets and a local SQLite database.
 
-## What the sample demonstrates
+## Sample results
 
-| Measure | Reproducible result |
-|---|---:|
-| Delivered shipments | 4,000 |
-| Billing exceptions | 453 |
-| Potential billing gap | $169,170 |
-| Overdue invoice balance at 30 September 2026 | $1,524,045 |
+The included example uses 4,000 made-up shipments. It finds 453 items to review and $169,170 in possible missing or incorrect billing. This is an amount to investigate, not money recovered. The overdue balance is a separate total.
 
-These are synthetic records generated with seed 29. The billing gap is an amount
-to investigate, not recovered revenue. The overdue balance is a separate metric.
-The controls identify every deliberately injected finding in this fixture; that
-does not establish accuracy on unknown production errors.
+## How it works
 
-## Design
+1. Load the sample shipments, rates, invoices and payments.
+2. Match each shipment to the right rate and invoice.
+3. Compare the amounts and calculate what is still owed.
+4. Save a review list and a browser report.
 
-```mermaid
-flowchart LR
-  S[Shipments and rates] --> M[Shipment finance mart]
-  I[Invoice revision history] --> V[Latest revision at cutoff]
-  P[Payment transactions] --> A[Aggregate by invoice]
-  V --> B[Invoice balances]
-  A --> B
-  B --> M
-  M --> Q[Billing review queue]
-  M --> BI[Power BI and Tableau extracts]
-```
+Python runs the steps. SQL checks the records. GitHub Actions reruns the tests and report after changes and each Monday.
 
-- SQL window functions select the latest eligible invoice revision.
-- Payments aggregate before invoice joins, preventing split-payment fan-out.
-- Effective-date joins use an inclusive start and exclusive end. Missing or
-  overlapping rates stop the run.
-- Monetary calculations use integer cents. A one-dollar comparison tolerance is explicit.
-- Replaying the fixture does not append duplicate invoices or receipts.
-- CI runs the tests and rebuilds the report on changes and each Monday.
+## Files worth opening
 
-The model is deliberately local and inspectable. SQLite is suitable for the demo;
-it is not evidence of warehouse-scale performance. Production ingestion would need
-source watermarks, correction handling, access controls and reconciliation sign-off.
-
-## Review the work
-
-- [SQL schema](sql/schema.sql) and [reporting queries](sql/marts.sql)
-- [Business definitions and acceptance criteria](docs/controls.md)
+- [SQL checks](sql/marts.sql)
+- [Billing rules](docs/controls.md)
 - [Power BI and Tableau setup](bi/README.md)
-- [Operating procedure](docs/runbook.md)
-- [Development workflow](docs/development.md)
+- [How to run and check the results](docs/runbook.md)
 
-## Boundaries
+## What still needs work
 
-The fixture assumes one expected customer invoice per delivered load. Split billing,
-credit notes, tax, currency conversion, fuel-index changes and disputed balances
-need separate rules before production use. Multiple invoices are flagged for review,
-not automatically removed. No employer data, source code or private system details
-are included.
+The example assumes one customer invoice per shipment. Taxes, credit notes, currency changes and split billing need additional rules. Power BI and Tableau files contain queries and calculations to build from, not finished desktop reports.
