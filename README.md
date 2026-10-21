@@ -4,6 +4,10 @@ Checks whether completed shipments have been billed correctly and which invoices
 
 For each shipment, the report compares the agreed rate, the invoice and the payments received. It puts differences in a list that a billing team can review.
 
+## Billing review desk
+
+A ledger-style view of shipment charges and receivables, with lane-level exceptions and a searchable review list.
+
 ![Billing report showing amounts to check](docs/preview.png)
 
 [Open the sample report](https://parijat9.github.io/reports/revenue.html)

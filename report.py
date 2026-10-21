@@ -14,12 +14,12 @@ def render(path, title, subtitle, metrics, rows, narrative, chart=""):
     )
     headers = "".join(f'<th>{escape(k.replace("_", " "))}</th>' for k in fields)
     html = """<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>TITLE</title><style>
-    :root{font-family:Arial,sans-serif;color:#17283a;background:#f3f4f0}*{box-sizing:border-box}body{margin:0}header{padding:42px 5vw;background:#132a39;color:#fff}header p{color:#d7e3e9;max-width:900px;line-height:1.6;font-size:18px}h1{font-size:clamp(30px,4vw,48px);margin:18px 0}small{font-size:13px;letter-spacing:.04em}main{padding:28px 5vw;max-width:1600px;margin:auto}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}article{background:white;padding:24px;border-top:3px solid #b28743}article small{color:#526273}strong{display:block;font-size:30px;margin-top:14px}section{margin-top:28px;background:white;padding:24px}h2{font-size:22px}p{line-height:1.65}input{padding:13px;font-size:16px;border:1px solid #9babb6;width:min(100%,500px)}.scroll{overflow:auto;margin-top:22px;max-height:560px}table{border-collapse:collapse;width:100%;font-size:15px}th{position:sticky;top:0;background:#e8eef0;text-align:left;text-transform:capitalize}td,th{padding:13px 16px;border-bottom:1px solid #e4e8e9;white-space:nowrap}tr:hover{background:#f7f4ed}footer{padding:25px 5vw;color:#536272;font-size:14px}.count{color:#536272;font-size:14px}</style>
-    <header><small>PARIJAT ANAND / OPERATIONS ANALYTICS</small><h1>TITLE</h1><p>SUBTITLE</p></header>
-    <main><div class="cards">CARDS</div><section><h2>Review notes</h2><p>NARRATIVE</p></section>CHART<section><h2>Detailed results</h2><label for="filter">Search the results</label><br><br><input id="filter" placeholder="Enter a lane, record ID or status"><p class="count" id="count"></p><div class="scroll"><table><thead><tr>HEADERS</tr></thead><tbody id="rows"></tbody></table></div></section></main><footer>Sample data. Rebuild this report with python run.py.</footer>
+    <title>TITLE</title><style>STYLES</style>
+    <header><small>RECEIVABLES / BILLING REVIEW</small><h1>TITLE</h1><p>SUBTITLE</p></header>
+    <main><div class="cards">CARDS</div><div class="overview">CHART<section class="notes"><h2>Reconciliation notes</h2><p>NARRATIVE</p></section></div><section class="results"><h2>Detailed results</h2><label for="filter">Search the results</label><br><br><input id="filter" placeholder="Enter a lane, record ID or status"><p class="count" id="count"></p><div class="scroll"><table><thead><tr>HEADERS</tr></thead><tbody id="rows"></tbody></table></div></section></main><footer>Sample data. Rebuild this report with python run.py.</footer>
     <script>const data=PAYLOAD,fields=FIELDS;const body=document.getElementById('rows');function draw(){const q=document.getElementById('filter').value.toLowerCase();const filtered=data.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(q)));body.replaceChildren();for(const row of filtered.slice(0,500)){const tr=document.createElement('tr');for(const field of fields){const td=document.createElement('td');td.textContent=row[field];tr.appendChild(td)}body.appendChild(tr)}document.getElementById('count').textContent=filtered.length+' matching records'+(filtered.length>500?' (first 500 shown)':'')}document.getElementById('filter').addEventListener('input',draw);draw();</script></html>"""
     for key, value in [
+        ("STYLES", Path(__file__).with_name("report.css").read_text(encoding="utf-8")),
         ("SUBTITLE", escape(subtitle)),
         ("TITLE", escape(title)),
         ("CARDS", cards),
@@ -38,9 +38,9 @@ def comparison_chart(title, labels, series):
     width, left, plot = 900, 90, 650
     height = 85 + len(labels) * (len(series) * 25 + 20)
     maximum = max((value for _, values in series for value in values), default=1) or 1
-    colors = ["#28677d", "#b78a40"]
+    colors = ["#997554", "#9f4529"]
     parts = [
-        f'<section><h2>{escape(title)}</h2><svg role="img" aria-label="{escape(title)}" viewBox="0 0 {width} {height}" style="width:100%;max-width:1100px">'
+        f'<section class="chart-panel"><h2>{escape(title)}</h2><svg role="img" aria-label="{escape(title)}" viewBox="0 0 {width} {height}" style="width:100%;max-width:1100px">'
     ]
     for j, (name, _) in enumerate(series):
         parts.append(
