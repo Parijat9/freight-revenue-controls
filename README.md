@@ -1,4 +1,4 @@
-# Freight billing checks
+# Freight Billing Checks
 
 Checks whether completed shipments have been billed correctly and which invoices still need payment.
 
