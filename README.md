@@ -22,7 +22,7 @@ A ledger-style view of shipment charges and receivables, with lane-level excepti
 
 ## Try it
 
-Install Python 3.10 or newer, then run these commands from this folder. No extra packages or accounts are needed.
+Install Python 3.10 or newer, then run these commands from the repository root (the folder containing `run.py`). No extra packages or accounts are needed.
 
 ```bash
 python -m unittest discover -s tests -v
